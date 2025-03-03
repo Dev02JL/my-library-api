@@ -1,6 +1,8 @@
 <?php
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity]
@@ -14,10 +16,15 @@ class User {
     private string $name; // Nom
 
     #[ORM\ManyToMany(targetEntity: Book::class)]
-    private array $borrowedBooks = []; // Livres empruntés
+    private Collection $borrowedBooks;
+
+    public function getBorrowedBooks(): Collection {
+        return $this->borrowedBooks;
+    }
 
     public function __construct(string $name) {
         $this->name = $name;
+        $this->borrowedBooks = new ArrayCollection(); // ✅ Initialisation correcte
     }
 
     public function getId(): int {

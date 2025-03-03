@@ -42,4 +42,19 @@ class LibraryService {
         $this->em->flush();
         return "Emprunt réussi.";
     }
+
+    public function returnBook(string $title, int $userId): string {
+        $book = $this->em->getRepository(Book::class)->findOneBy(['title' => $title]);
+        $user = $this->em->getRepository(User::class)->find($userId);
+    
+        if (!$book || !$user) {
+            return "Livre ou utilisateur introuvable.";
+        }
+    
+        return $this->processReturn($user, $book);
+    }
+    
+    private function processReturn(User $user, Book $book): string {
+        return $user->returnBook($book);
+    }
 }

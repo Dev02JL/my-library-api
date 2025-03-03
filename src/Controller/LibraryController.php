@@ -24,7 +24,7 @@ class LibraryController extends AbstractController {
         $data = json_decode($request->getContent(), true);
         
         if (!isset($data['title']) || !isset($data['author'])) {
-            return new JsonResponse(['error' => 'Informations incomplètes'], 400);
+            return new JsonResponse(['error' => 'Données incomplètes'], Response::HTTP_BAD_REQUEST);
         }
 
         $this->libraryService->addBook($data['title'], $data['author']);
@@ -36,10 +36,22 @@ class LibraryController extends AbstractController {
         $data = json_decode($request->getContent(), true);
         
         if (!isset($data['title']) || !isset($data['userId'])) {
-            return new JsonResponse(['error' => 'Données incomplètes'], 400);
+            return new JsonResponse(['error' => 'Données incomplètes'], Response::HTTP_BAD_REQUEST);
         }
 
         $message = $this->libraryService->borrowBook($data['title'], (int)$data['userId']);
+        return new JsonResponse(['message' => $message]);
+    }
+
+    #[Route('/return', methods: ['POST'])]
+    public function returnBook(Request $request): JsonResponse {
+        $data = json_decode($request->getContent(), true);
+        
+        if (!isset($data['title']) || !isset($data['userId'])) {
+            return new JsonResponse(['error' => 'Données incomplètes'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $message = $this->libraryService->returnBook($data['title'], (int)$data['userId']);
         return new JsonResponse(['message' => $message]);
     }
 }
